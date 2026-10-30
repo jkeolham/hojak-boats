@@ -42,21 +42,23 @@
   .num{font-family:'DM Mono',monospace; font-variant-numeric:tabular-nums;}
   h1,h2,h3{text-wrap:balance;}
 
-  .wrap{max-width:860px; margin:0 auto; padding:30px 18px 90px;}
+  .wrap{max-width:860px; margin:30px auto 90px; padding:0 18px;}
 
-  .masthead{margin-bottom:18px;}
-  .masthead .eyebrow{
-    font-family:'DM Mono',monospace; font-size:11.5px; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--accent); font-weight:500;
-  }
-  .masthead h1{font-family:'Oswald',sans-serif; font-weight:600; font-size:32px; margin:5px 0 6px; letter-spacing:.01em;}
-  .masthead .sub{color:var(--text-dim); font-size:14px; line-height:1.6; max-width:56ch;}
+  .section-label{font-size:13px; font-weight:600; color:var(--text-dim); margin:26px 0 10px; letter-spacing:.04em;}
+  .section-label:first-of-type{margin-top:0;}
 
-  .freshness{
-    background:color-mix(in srgb, var(--warn) 12%, var(--surface)); border:1px solid color-mix(in srgb, var(--warn) 40%, transparent);
-    border-radius:10px; padding:12px 14px; font-size:12.5px; line-height:1.65; color:var(--text); margin:20px 0 26px;
+  .other-port{margin-bottom:22px;}
+  .other-port-head{display:flex; align-items:baseline; gap:8px; margin-bottom:7px;}
+  .other-port-head h3{font-size:13px; font-weight:600; color:var(--text-dim); margin:0; text-transform:none;}
+  .other-port-head .cnt{font-family:'DM Mono',monospace; font-size:10.5px; color:var(--text-dim); opacity:.7;}
+  .other-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:7px;}
+  .other-link{
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    padding:8px 11px; color:var(--text); text-decoration:none; font-size:13px;
   }
-  .freshness b{color:var(--warn);}
+  .other-link:hover{border-color:var(--accent-dim); color:var(--accent);}
+  .other-link .go{font-size:10px; color:var(--text-dim); font-family:'DM Mono',monospace;}
 
   .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--text-dim); margin-bottom:22px; font-family:'DM Mono',monospace;}
   .legend span{display:inline-flex; align-items:center; gap:5px;}
@@ -108,6 +110,7 @@
   footer.foot{max-width:860px; margin:34px auto 0; padding:0 18px; color:var(--text-dim); font-size:11px; font-family:'DM Mono',monospace; line-height:1.6;}
 
   .weather-section{margin-top:34px;}
+  .weather-section.top{margin-top:0; margin-bottom:30px;}
   .weather-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:10px;}
   .weather-link{
     display:flex; align-items:center; justify-content:space-between; gap:8px;
@@ -123,13 +126,10 @@
 <body>
 
 <div class="wrap">
-  <div class="masthead">
-    <div class="eyebrow">Hojak Fleet Dispatch</div>
-    <h1 class="disp">내 선사 바로가기</h1>
-    <div class="sub">탑티어로 지정했거나 자주 탔던 선사만 모았습니다. 배 이름을 누르면 예약 페이지로 바로 이동합니다.</div>
+  <div class="weather-section top">
+    <div class="port-head"><h2 class="disp">날씨 바로가기</h2><span class="cnt">badatime windy</span></div>
+    <div class="weather-grid" id="weatherGrid"></div>
   </div>
-
-  <div class="freshness" id="freshness"></div>
 
   <div class="legend">
     <span><i class="good"></i>예약 가능</span>
@@ -138,12 +138,11 @@
     <span><i class="none"></i>미확인(모니터링 안 됨)</span>
   </div>
 
+  <div class="section-label disp">탑티어 선사</div>
   <div id="ports"></div>
 
-  <div class="weather-section">
-    <div class="port-head"><h2 class="disp">날씨 바로가기</h2><span class="cnt">badatime windy</span></div>
-    <div class="weather-grid" id="weatherGrid"></div>
-  </div>
+  <div class="section-label disp">그 외 선사</div>
+  <div id="otherPorts"></div>
 </div>
 
 <footer class="foot">HOJAK FLEET DISPATCH · 데이터 출처: reservation-monitor state 파일(N100) · 자동 갱신 없음, 수동 반영</footer>
@@ -246,10 +245,6 @@
     }
   ];
 
-  document.getElementById('freshness').innerHTML =
-    '<b>⚠ 데이터 안내</b> — 예약 모니터는 현재 2026-11-06만 추적 중이라, 이번 주말(10/30·10/31)은 확인된 자리 정보가 없습니다(전부 "-"). ' +
-    '11/1은 <b>2026-10-12</b>에 마지막으로 확인된 값으로, 실시간이 아닙니다. 정확한 자리는 배 이름을 눌러 예약 페이지에서 직접 확인하세요.';
-
   function statusClass(s){
     if(s===null) return 'none';
     if(s.status==='가능') return 'good';
@@ -294,6 +289,62 @@
     html += '</div>';
   });
   portsEl.innerHTML = html;
+
+  // 탑티어 아닌 선사 — 사용자가 "필터링"(비선호)으로 제외한 배만 뺀 전체 레지스트리.
+  // 데이터 출처: scripts/reservation-monitor/check_reservations.py의 THEFISHING/SUNSANG24 +
+  // filters.json(비선호 제외). 날짜별 자리 데이터는 모니터 scope가 탑티어로 좁혀져 있어 없음 — 링크만 제공.
+  var otherBoats = [
+    {port:"궁평항", list:[
+      {name:"에이스피싱", url:"http://acefishing.kr"}
+    ]},
+    {port:"전곡항", list:[
+      {name:"골드피싱호", url:"http://golddragonho.sunsang24.com"},
+      {name:"레인보우호", url:"http://rainbowho.com"},
+      {name:"리틀대박호", url:"http://jackpot.sunsang24.com"},
+      {name:"빅보스호", url:"http://bigbossho.sunsang24.com"},
+      {name:"양철호", url:"http://xn--og5b42kssi.com"},
+      {name:"예지퀸호", url:"http://yejiqueen.sunsang24.com"},
+      {name:"옐로우피싱", url:"http://yellow.sunsang24.com"},
+      {name:"유로파호", url:"http://europa.sunsang24.com"},
+      {name:"입질대박호", url:"http://chunil.sunsang24.com"},
+      {name:"채비야호", url:"http://chaebiya.sunsang24.com"},
+      {name:"태평호", url:"http://tpho.sunsang24.com"},
+      {name:"해운호", url:"http://haeun.sunsang24.com"}
+    ]},
+    {port:"영흥도", list:[
+      {name:"21금강호", url:"http://taeyeongnaksi.co.kr"},
+      {name:"강바다피싱", url:"http://kangbada.kr"},
+      {name:"강팀호", url:"http://ybada.com"},
+      {name:"골드피싱호", url:"http://goldfishingho.com"},
+      {name:"뉴대신호", url:"http://shipowner.kr"},
+      {name:"마이웨이호", url:"http://xn--c20b03d25ji7g57dh16a.kr"},
+      {name:"마이웨이호참돔", url:"http://xn--c20b03d25ji7g57dh16a.kr"},
+      {name:"만수피싱", url:"https://xn--lz2bu5mvsau18c.kr"},
+      {name:"민성호", url:"http://yhdfish.net"},
+      {name:"백호", url:"http://daegyonaksi.com"},
+      {name:"빅토리호", url:"http://yhseaking.com"},
+      {name:"슈퍼스타호", url:"http://yhdfishing.com"},
+      {name:"스타트호", url:"http://xn--9t4b21xhpbo1f.com"},
+      {name:"아이리스호", url:"http://irisho.kr"},
+      {name:"야호", url:"http://xn--2f5b291a.com"},
+      {name:"영석호", url:"http://xn--3i4bl3g39q.com"},
+      {name:"원스타호", url:"http://paradiseho.com"},
+      {name:"은하1호", url:"http://gilfish.co.kr"},
+      {name:"전진호", url:"http://junjin.thefishing.kr"},
+      {name:"지오디호", url:"https://teamgod.kr"},
+      {name:"짱구피싱호", url:"http://ybada.com"},
+      {name:"크루즈호", url:"http://cruiseho.com"},
+      {name:"페라리호", url:"http://xn--oi2bn5b095b4mc.com"}
+    ]}
+  ];
+
+  document.getElementById('otherPorts').innerHTML = otherBoats.map(function(group){
+    var links = group.list.map(function(b){
+      return '<a class="other-link" href="'+b.url+'" target="_blank" rel="noopener"><span>'+b.name+'</span><span class="go">예약 →</span></a>';
+    }).join('');
+    return '<div class="other-port"><div class="other-port-head"><h3>'+group.port+'</h3><span class="cnt">'+group.list.length+'척</span></div>'+
+      '<div class="other-grid">'+links+'</div></div>';
+  }).join('');
 })();
 </script>
 </body>
