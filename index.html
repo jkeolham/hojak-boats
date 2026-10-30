@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 선사 바로가기</title>
+<meta name="description" content="선호 선사 예약 페이지 바로가기 + 주말 여유자리 현황">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#12161c; --surface:#1b2129; --surface-2:#232b35; --line:#2e3742;
+    --text:#e8ecf1; --text-dim:#8894a3;
+    --accent:#ff7a3d; --accent-dim:#d85f26;
+    --good:#39c98a; --warn:#e2a93d; --muted:#5b6673;
+    --shadow:0 16px 40px -18px rgba(0,0,0,.55);
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --ink:#eef1f4; --surface:#ffffff; --surface-2:#f1f4f7; --line:#d7dde3;
+      --text:#1a2028; --text-dim:#5c6a79;
+      --accent:#d85a22; --accent-dim:#b8481a;
+      --good:#1f9d68; --warn:#b8800f; --muted:#8a95a3;
+      --shadow:0 16px 40px -18px rgba(30,40,55,.2);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#12161c; --surface:#1b2129; --surface-2:#232b35; --line:#2e3742;
+    --text:#e8ecf1; --text-dim:#8894a3;
+    --accent:#ff7a3d; --accent-dim:#d85f26;
+    --good:#39c98a; --warn:#e2a93d; --muted:#5b6673;
+    --shadow:0 16px 40px -18px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink); color:var(--text);
+    font-family:'Noto Sans KR',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .disp{font-family:'Oswald',sans-serif; text-transform:uppercase;}
+  .num{font-family:'DM Mono',monospace; font-variant-numeric:tabular-nums;}
+  h1,h2,h3{text-wrap:balance;}
+
+  .wrap{max-width:860px; margin:0 auto; padding:30px 18px 90px;}
+
+  .masthead{margin-bottom:18px;}
+  .masthead .eyebrow{
+    font-family:'DM Mono',monospace; font-size:11.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent); font-weight:500;
+  }
+  .masthead h1{font-family:'Oswald',sans-serif; font-weight:600; font-size:32px; margin:5px 0 6px; letter-spacing:.01em;}
+  .masthead .sub{color:var(--text-dim); font-size:14px; line-height:1.6; max-width:56ch;}
+
+  .freshness{
+    background:color-mix(in srgb, var(--warn) 12%, var(--surface)); border:1px solid color-mix(in srgb, var(--warn) 40%, transparent);
+    border-radius:10px; padding:12px 14px; font-size:12.5px; line-height:1.65; color:var(--text); margin:20px 0 26px;
+  }
+  .freshness b{color:var(--warn);}
+
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--text-dim); margin-bottom:22px; font-family:'DM Mono',monospace;}
+  .legend span{display:inline-flex; align-items:center; gap:5px;}
+  .legend i{width:8px; height:8px; border-radius:2px; display:inline-block;}
+  .legend i.good{background:var(--good);}
+  .legend i.warn{background:var(--warn);}
+  .legend i.muted{background:var(--muted);}
+  .legend i.none{background:var(--line);}
+
+  .port-section{margin-bottom:30px;}
+  .port-head{
+    display:flex; align-items:baseline; gap:10px; margin-bottom:10px; padding-bottom:7px;
+    border-bottom:1px solid var(--line);
+  }
+  .port-head h2{font-family:'Oswald',sans-serif; font-weight:600; font-size:17px; margin:0; letter-spacing:.03em;}
+  .port-head .cnt{font-family:'DM Mono',monospace; font-size:11px; color:var(--text-dim);}
+
+  .day-head{display:grid; grid-template-columns:1fr repeat(3,74px); gap:8px; padding:0 14px 6px; font-family:'DM Mono',monospace; font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.05em;}
+  .day-head span{text-align:center;}
+  .day-head span:first-child{text-align:left;}
+
+  .boat-row{
+    display:grid; grid-template-columns:1fr repeat(3,74px); gap:8px; align-items:center;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:10px 14px; margin-bottom:8px; box-shadow:var(--shadow);
+  }
+  .boat-link{
+    color:var(--text); text-decoration:none; font-weight:500; font-size:14.5px;
+    display:flex; align-items:center; gap:7px; min-width:0;
+  }
+  .boat-link:hover{color:var(--accent);}
+  .boat-link .go{font-size:11px; color:var(--accent); font-family:'DM Mono',monospace; flex:none; opacity:0; transition:opacity .15s;}
+  .boat-row:hover .boat-link .go{opacity:1;}
+  .boat-link .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+  .chip{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    text-decoration:none; border-radius:7px; padding:6px 4px; font-family:'DM Mono',monospace;
+    border:1px solid transparent;
+  }
+  .chip .st{font-size:12.5px; font-weight:500;}
+  .chip .ck{font-size:9px; opacity:.75;}
+  .chip.good{background:color-mix(in srgb, var(--good) 15%, transparent); border-color:color-mix(in srgb, var(--good) 40%, transparent); color:var(--good);}
+  .chip.closed{background:var(--surface-2); border-color:var(--line); color:var(--muted);}
+  .chip.unclear{background:color-mix(in srgb, var(--warn) 14%, transparent); border-color:color-mix(in srgb, var(--warn) 40%, transparent); color:var(--warn);}
+  .chip.none{background:var(--surface-2); border-color:var(--line); color:var(--text-dim); cursor:default;}
+  .chip.none .st{color:var(--text-dim);}
+
+  footer.foot{max-width:860px; margin:34px auto 0; padding:0 18px; color:var(--text-dim); font-size:11px; font-family:'DM Mono',monospace; line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="eyebrow">Hojak Fleet Dispatch</div>
+    <h1 class="disp">내 선사 바로가기</h1>
+    <div class="sub">탑티어로 지정했거나 자주 탔던 선사만 모았습니다. 배 이름을 누르면 예약 페이지로 바로 이동합니다.</div>
+  </div>
+
+  <div class="freshness" id="freshness"></div>
+
+  <div class="legend">
+    <span><i class="good"></i>예약 가능</span>
+    <span><i class="muted"></i>마감</span>
+    <span><i class="warn"></i>미분류(사이트 응답 불명확)</span>
+    <span><i class="none"></i>미확인(모니터링 안 됨)</span>
+  </div>
+
+  <div id="ports"></div>
+</div>
+
+<footer class="foot">HOJAK FLEET DISPATCH · 데이터 출처: reservation-monitor state 파일(N100) · 자동 갱신 없음, 수동 반영</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // 이번 주말 3일 — 모니터 state 파일에서 확인된 값만 채움. 없으면 day:null(= "-" 표시).
+  var WEEKEND = [
+    {key:"fri", label:"금", date:"10/30", checked:null},
+    {key:"sat", label:"토", date:"10/31", checked:null},
+    {key:"sun", label:"일", date:"11/1", checked:"2026-10-12"}
+  ];
+
+  var boats = [
+    {
+      port: "궁평항",
+      list: [
+        {
+          name:"타이탄호", url:"http://kungpyeong.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261101&PA_N_UID=3070&PH_N_UID=0&PS_N_UID=27361"}}
+        },
+        {
+          name:"블랙호", url:"http://kungpyeong.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261101&PA_N_UID=4393&PH_N_UID=0&PS_N_UID=27362"}}
+        }
+      ]
+    },
+    {
+      port: "전곡항",
+      list: [
+        {
+          name:"제비호", url:"http://jebi.sunsang24.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://jebi.sunsang24.com/ship/schedule_fleet/202611"}}
+        },
+        {
+          name:"스타피싱호", url:"http://rainbowho.com",
+          days:{fri:null, sat:null,
+            sun:{status:"가능", seats:1, url:"http://rainbowho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=1925&PH_N_UID=0&PS_N_UID=11313"}}
+        },
+        {
+          name:"왕선장호", url:"http://king.sunsang24.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://king.sunsang24.com/ship/schedule_fleet/202611"}}
+        }
+      ]
+    },
+    {
+      port: "영흥도",
+      list: [
+        {
+          name:"금강7호", url:"http://kumkangho.co.kr",
+          days:{fri:null, sat:null,
+            sun:{status:"미분류", seats:null, url:"https://thefishing.kr/reservation/list.php?uid=1839&year=2026&month=11"}}
+        },
+        {
+          name:"카리스마호", url:"http://charisma.sunsang24.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://charisma.sunsang24.com/ship/schedule_fleet/202611"}}
+        },
+        {
+          name:"나이스호", url:"http://niceho.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://niceho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=176&PH_N_UID=0&PS_N_UID=24003"}}
+        },
+        {
+          name:"명성호", url:"http://xn--hq1b31ko5fzpfdsxrtb.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://xn--hq1b31ko5fzpfdsxrtb.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261101&PA_N_UID=1685&PH_N_UID=0&PS_N_UID=13742"}}
+        },
+        {
+          name:"레전드호", url:"http://xn--hy1b43d01tuzn.com",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://xn--hy1b43d01tuzn.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=1289&PH_N_UID=0&PS_N_UID=17486"}}
+        },
+        {
+          name:"영진호", url:"http://youngjinho.net",
+          days:{fri:null, sat:null,
+            sun:{status:"미분류", seats:null, url:"https://thefishing.kr/reservation/list.php?uid=801&year=2026&month=11"}}
+        },
+        {
+          name:"루어피싱호", url:"http://yhdfish.net",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://yhdfish.net/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=2441&PH_N_UID=0&PS_N_UID=9763"}}
+        },
+        {
+          name:"팀누리호", url:"http://xn--od1b68lz1wi4c.kr",
+          days:{fri:null, sat:null,
+            sun:{status:"마감", seats:0, url:"http://xn--od1b68lz1wi4c.kr/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=6149&PH_N_UID=0&PS_N_UID=SPED_UID542330"}}
+        },
+        {
+          name:"팀만수호", url:"https://teammansu.kr",
+          days:{fri:null, sat:null, sun:null}
+        }
+      ]
+    }
+  ];
+
+  document.getElementById('freshness').innerHTML =
+    '<b>⚠ 데이터 안내</b> — 예약 모니터는 현재 2026-11-06만 추적 중이라, 이번 주말(10/30·10/31)은 확인된 자리 정보가 없습니다(전부 "-"). ' +
+    '11/1은 <b>2026-10-12</b>에 마지막으로 확인된 값으로, 실시간이 아닙니다. 정확한 자리는 배 이름을 눌러 예약 페이지에서 직접 확인하세요.';
+
+  function statusClass(s){
+    if(s===null) return 'none';
+    if(s.status==='가능') return 'good';
+    if(s.status==='마감') return 'closed';
+    return 'unclear';
+  }
+  function chipLabel(s){
+    if(s===null) return '-';
+    if(s.status==='가능') return (s.seats!=null? s.seats+'석' : '가능');
+    if(s.status==='마감') return '마감';
+    return '미분류';
+  }
+
+  var portsEl = document.getElementById('ports');
+  var html = '';
+  boats.forEach(function(group){
+    html += '<div class="port-section">';
+    html += '<div class="port-head"><h2 class="disp">'+group.port+'</h2><span class="cnt">'+group.list.length+'척</span></div>';
+    html += '<div class="day-head"><span></span>' + WEEKEND.map(function(d){ return '<span>'+d.label+' '+d.date+'</span>'; }).join('') + '</div>';
+    group.list.forEach(function(boat){
+      html += '<div class="boat-row">';
+      html += '<a class="boat-link" href="'+boat.url+'" target="_blank" rel="noopener"><span class="nm">'+boat.name+'</span><span class="go">예약 →</span></a>';
+      WEEKEND.forEach(function(d){
+        var s = boat.days[d.key];
+        var cls = statusClass(s);
+        var label = chipLabel(s);
+        var href = (s && s.url) ? s.url : boat.url;
+        var ck = (s && d.checked) ? '<span class="ck">'+d.checked.slice(5).replace('-','/')+' 확인</span>' : '';
+        html += '<a class="chip '+cls+'" href="'+href+'" target="_blank" rel="noopener"><span class="st">'+label+'</span>'+ck+'</a>';
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  portsEl.innerHTML = html;
+})();
+</script>
+</body>
+</html>
