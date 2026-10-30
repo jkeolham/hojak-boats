@@ -106,6 +106,18 @@
   .chip.none .st{color:var(--text-dim);}
 
   footer.foot{max-width:860px; margin:34px auto 0; padding:0 18px; color:var(--text-dim); font-size:11px; font-family:'DM Mono',monospace; line-height:1.6;}
+
+  .weather-section{margin-top:34px;}
+  .weather-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:10px;}
+  .weather-link{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px; color:var(--text); text-decoration:none; font-size:14px; font-weight:500;
+    box-shadow:var(--shadow); transition:border-color .15s;
+  }
+  .weather-link:hover{border-color:var(--accent); color:var(--accent);}
+  .weather-link .go{font-size:11px; color:var(--text-dim); font-family:'DM Mono',monospace;}
+  .weather-link:hover .go{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -127,6 +139,11 @@
   </div>
 
   <div id="ports"></div>
+
+  <div class="weather-section">
+    <div class="port-head"><h2 class="disp">날씨 바로가기</h2><span class="cnt">badatime windy</span></div>
+    <div class="weather-grid" id="weatherGrid"></div>
+  </div>
 </div>
 
 <footer class="foot">HOJAK FLEET DISPATCH · 데이터 출처: reservation-monitor state 파일(N100) · 자동 갱신 없음, 수동 반영</footer>
@@ -245,6 +262,15 @@
     if(s.status==='마감') return '마감';
     return '미분류';
   }
+
+  var weatherLinks = [
+    {name:"신창항", url:"https://www.badatime.com/1223/windy"},
+    {name:"자월도", url:"https://www.badatime.com/377/windy"},
+    {name:"천수만", url:"https://www.badatime.com/356/windy"}
+  ];
+  document.getElementById('weatherGrid').innerHTML = weatherLinks.map(function(w){
+    return '<a class="weather-link" href="'+w.url+'" target="_blank" rel="noopener"><span>'+w.name+'</span><span class="go">windy →</span></a>';
+  }).join('');
 
   var portsEl = document.getElementById('ports');
   var html = '';
