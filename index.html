@@ -111,16 +111,19 @@
 
   .weather-section{margin-top:34px;}
   .weather-section.top{margin-top:0; margin-bottom:30px;}
-  .weather-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:10px;}
-  .weather-link{
-    display:flex; align-items:center; justify-content:space-between; gap:8px;
+  .weather-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:10px;}
+  .weather-card{
     background:var(--surface); border:1px solid var(--line); border-radius:10px;
-    padding:12px 14px; color:var(--text); text-decoration:none; font-size:14px; font-weight:500;
-    box-shadow:var(--shadow); transition:border-color .15s;
+    padding:11px 12px; box-shadow:var(--shadow);
   }
-  .weather-link:hover{border-color:var(--accent); color:var(--accent);}
-  .weather-link .go{font-size:11px; color:var(--text-dim); font-family:'DM Mono',monospace;}
-  .weather-link:hover .go{color:var(--accent);}
+  .weather-card .loc{font-size:14px; font-weight:500; margin-bottom:8px;}
+  .weather-btns{display:flex; gap:6px;}
+  .weather-btn{
+    flex:1; text-align:center; text-decoration:none; color:var(--text-dim);
+    background:var(--surface-2); border:1px solid var(--line); border-radius:7px;
+    padding:6px 4px; font-size:12px; font-weight:500; transition:border-color .15s,color .15s;
+  }
+  .weather-btn:hover{border-color:var(--accent); color:var(--accent);}
 </style>
 </head>
 <body>
@@ -259,12 +262,15 @@
   }
 
   var weatherLinks = [
-    {name:"신창항", url:"https://www.badatime.com/1223/windy"},
-    {name:"자월도", url:"https://www.badatime.com/377/windy"},
-    {name:"천수만", url:"https://www.badatime.com/356/windy"}
+    {name:"신창항", idx:1223},
+    {name:"자월도", idx:377},
+    {name:"천수만", idx:356}
   ];
   document.getElementById('weatherGrid').innerHTML = weatherLinks.map(function(w){
-    return '<a class="weather-link" href="'+w.url+'" target="_blank" rel="noopener"><span>'+w.name+'</span><span class="go">windy →</span></a>';
+    return '<div class="weather-card"><div class="loc">'+w.name+'</div><div class="weather-btns">'+
+      '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/windy" target="_blank" rel="noopener">윈디</a>'+
+      '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/tide" target="_blank" rel="noopener">물때표</a>'+
+      '</div></div>';
   }).join('');
 
   var portsEl = document.getElementById('ports');
