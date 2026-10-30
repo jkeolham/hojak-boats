@@ -8,6 +8,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="favicon-180.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
   :root{
     --ink:#12161c; --surface:#1b2129; --surface-2:#232b35; --line:#2e3742;
@@ -126,6 +128,17 @@
     padding:6px 2px; font-size:11.5px; font-weight:500; transition:border-color .15s,color .15s;
   }
   .weather-btn:hover{border-color:var(--accent); color:var(--accent);}
+
+  .walk-map{width:100%; height:300px; border-radius:10px; border:1px solid var(--line); margin-top:10px; overflow:hidden;}
+  .walk-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin-top:10px;}
+  .walk-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:11px 12px; box-shadow:var(--shadow);
+  }
+  .walk-card .loc{font-size:14px; font-weight:500; margin-bottom:3px;}
+  .walk-card .note{font-size:11.5px; color:var(--text-dim); line-height:1.5; margin-bottom:9px;}
+  .walk-card .walk-btns{display:flex; gap:6px; flex-wrap:wrap;}
+  .walk-card .walk-btns .weather-btn{flex:1 1 60px;}
 </style>
 </head>
 <body>
@@ -135,6 +148,10 @@
     <div class="port-head"><h2 class="disp">날씨 바로가기</h2><span class="cnt">badatime windy</span></div>
     <div class="weather-grid" id="weatherGrid"></div>
   </div>
+
+  <div class="section-label disp">워킹 포인트</div>
+  <div id="walkMap" class="walk-map"></div>
+  <div class="walk-grid" id="walkGrid"></div>
 
   <div class="legend">
     <span><i class="good"></i>예약 가능</span>
@@ -274,6 +291,52 @@
       '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/tide" target="_blank" rel="noopener">물때표</a>'+
       '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/sea-temp" target="_blank" rel="noopener">수온</a>'+
       '</div></div>';
+  }).join('');
+
+  // 워킹(도보) 갑오징어 포인트 — wiki/comparisons/경기-인천-워킹-갑오징어-포인트-비교 참고.
+  // badatime idx는 영흥도 진두항(1422)만 확보됨 — 나머지는 지도 링크만 제공(지어내지 않음).
+  var walkPoints = [
+    {
+      name:"소무의도 (떼무리 선착장·광명방파제)", lat:37.366, lon:126.441,
+      note:"여러 출처에서 공통 확인된 쭈갑 워킹 메카. 9~11월 피크.",
+      idx:null
+    },
+    {
+      name:"영흥도 진두항", lat:37.25, lon:126.5,
+      note:"badatime 등록 포인트(idx=1422). 쭈꾸미 메인, 갑오징어 혼재.",
+      idx:1422
+    },
+    {
+      name:"을왕리해수욕장 갯바위", lat:37.4469, lon:126.3774,
+      note:"⚠ 만조 시 고립 위험 구간 있음 — 물때 필수 확인.",
+      idx:null
+    },
+    {
+      name:"시화나래휴게소 일대", lat:37.327, lon:126.600,
+      note:"조황 기록은 있으나 근거 출처 품질 낮음 — 보류 권장.",
+      idx:null
+    }
+  ];
+
+  var walkMap = L.map('walkMap', {scrollWheelZoom:false}).setView([37.35, 126.48], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(walkMap);
+  walkPoints.forEach(function(p){
+    L.marker([p.lat, p.lon]).addTo(walkMap).bindPopup('<b>'+p.name+'</b><br>'+p.note);
+  });
+
+  document.getElementById('walkGrid').innerHTML = walkPoints.map(function(p){
+    var mapUrl = 'https://www.google.com/maps/search/?api=1&query='+p.lat+','+p.lon;
+    var btns = '<a class="weather-btn" href="'+mapUrl+'" target="_blank" rel="noopener">지도</a>';
+    if(p.idx){
+      btns += '<a class="weather-btn" href="https://www.badatime.com/'+p.idx+'/windy" target="_blank" rel="noopener">윈디</a>';
+      btns += '<a class="weather-btn" href="https://www.badatime.com/'+p.idx+'/tide" target="_blank" rel="noopener">물때표</a>';
+      btns += '<a class="weather-btn" href="https://www.badatime.com/'+p.idx+'/sea-temp" target="_blank" rel="noopener">수온</a>';
+    }
+    return '<div class="walk-card"><div class="loc">'+p.name+'</div><div class="note">'+p.note+'</div>'+
+      '<div class="walk-btns">'+btns+'</div></div>';
   }).join('');
 
   var portsEl = document.getElementById('ports');
