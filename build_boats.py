@@ -165,5 +165,73 @@ def build(ref_date=None):
         print(f"  - {w['date']} ({w['label']}): 확인일시={w['checked']}")
 
 
+def fetch_weekend_states(ref_date=None):
+    """이번 주 금/토/일의 탑티어 선사 예약 현황을 최신 크롤링하여 state 디렉터리에 저장한다."""
+    import sys
+    scripts_dir = "/home/ttolmany/scripts/reservation-monitor"
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    from check_reservations import run_check
+
+    weekend_info = get_weekend_dates(ref_date)
+    dates_str = [w["date_obj"].strftime("%m/%d") for w in weekend_info]
+    print(f"[build_boats] 이번 주말({dates_str}) 탑티어 선사 크롤링 수집 시작")
+    for w in weekend_info:
+        iso = w["date_obj"].isoformat()
+        print(f"  -> {iso} ({w['label']}요일) 탑티어 선사 실시간 조회 중...")
+        try:
+            run_check(iso, notify=False, scope="top")
+        except Exception as e:
+            print(f"  [오류] {iso} 수집 실패: {e}")
+
+
+def deploy():
+    """index.html의 변경 사항을 GitHub Pages (origin/master)에 자동 커밋 및 푸시한다."""
+    import os
+    import subprocess
+
+    env = os.environ.copy()
+    env["PATH"] = f"/home/ttolmany/.local/bin:{env.get('PATH', '')}"
+
+    res = subprocess.run(
+        ["git", "status", "--porcelain", "index.html"],
+        cwd=str(BASE_DIR),
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    if not res.stdout.strip():
+        print("[build_boats] index.html 내용 변경 없음. GitHub 푸시 생략.")
+        return False
+
+    print("[build_boats] index.html 내용 변경 감지 -> 커밋 및 푸시 진행")
+    subprocess.run(["git", "add", "index.html"], cwd=str(BASE_DIR), check=True)
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    commit_msg = f"chore(auto): update weekend boat reservation status ({now_str})"
+    subprocess.run(["git", "commit", "-m", commit_msg], cwd=str(BASE_DIR), check=True, env=env)
+    push_res = subprocess.run(
+        ["git", "push", "origin", "master"],
+        cwd=str(BASE_DIR),
+        capture_output=True,
+        text=True,
+        env=env
+    )
+    if push_res.returncode == 0:
+        print("[build_boats] GitHub 배포(git push) 성공!")
+        return True
+    else:
+        print(f"[build_boats] GitHub 배포 실패: {push_res.stderr}")
+        return False
+
+
 if __name__ == "__main__":
-    build()
+    import sys
+    if "--sync" in sys.argv:
+        print(f"=== [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] hojak-boats 자동 동기화 및 배포 시작 ===")
+        fetch_weekend_states()
+        build()
+        deploy()
+        print(f"=== [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] hojak-boats 자동 동기화 및 배포 완료 ===")
+    else:
+        build()
+
