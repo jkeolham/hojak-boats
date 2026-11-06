@@ -20,6 +20,7 @@ BASE_BOATS = [
         "list": [
             {"name": "타이탄호", "url": "http://kungpyeong.com"},
             {"name": "블랙호", "url": "http://kungpyeong.com"},
+            {"name": "바다피싱호", "url": "http://gpseafishing.kr"},
         ]
     },
     {
