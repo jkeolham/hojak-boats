@@ -178,7 +178,7 @@
   <div id="otherPorts"></div>
 </div>
 
-<footer class="foot">HOJAK FLEET DISPATCH · 데이터 출처: reservation-monitor state 파일(N100) · 자동 갱신 없음, 수동 반영</footer>
+<footer class="foot">HOJAK FLEET DISPATCH · 최신 자동 갱신 2026-11-06 10:22 (N100 reservation-monitor)</footer>
 
 <script>
 (function(){
@@ -186,97 +186,340 @@
 
   // 이번 주말 3일 — 모니터 state 파일에서 확인된 값만 채움. 없으면 day:null(= "-" 표시).
   var WEEKEND = [
-    {key:"fri", label:"금", date:"10/30", checked:null},
-    {key:"sat", label:"토", date:"10/31", checked:null},
-    {key:"sun", label:"일", date:"11/1", checked:"2026-10-12"}
-  ];
+    {
+        "key": "fri",
+        "label": "금",
+        "date": "11/6",
+        "iso": "2026-11-06",
+        "checked": "2026-11-01"
+    },
+    {
+        "key": "sat",
+        "label": "토",
+        "date": "11/7",
+        "iso": "2026-11-07",
+        "checked": "2026-10-13"
+    },
+    {
+        "key": "sun",
+        "label": "일",
+        "date": "11/8",
+        "iso": "2026-11-08",
+        "checked": "2026-10-29"
+    }
+];
 
   var boats = [
     {
-      port: "궁평항",
-      list: [
-        {
-          name:"타이탄호", url:"http://kungpyeong.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261101&PA_N_UID=3070&PH_N_UID=0&PS_N_UID=27361"}}
-        },
-        {
-          name:"블랙호", url:"http://kungpyeong.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261101&PA_N_UID=4393&PH_N_UID=0&PS_N_UID=27362"}}
-        }
-      ]
+        "port": "궁평항",
+        "list": [
+            {
+                "name": "타이탄호",
+                "url": "http://kungpyeong.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261106&PA_N_UID=3070&PH_N_UID=0&PS_N_UID=27361"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261107&PA_N_UID=3070&PH_N_UID=0&PS_N_UID=27361"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261108&PA_N_UID=3070&PH_N_UID=0&PS_N_UID=27361"
+                    }
+                }
+            },
+            {
+                "name": "블랙호",
+                "url": "http://kungpyeong.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261106&PA_N_UID=4393&PH_N_UID=0&PS_N_UID=27362"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261107&PA_N_UID=4393&PH_N_UID=0&PS_N_UID=27362"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://kungpyeong.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261108&PA_N_UID=4393&PH_N_UID=0&PS_N_UID=27362"
+                    }
+                }
+            }
+        ]
     },
     {
-      port: "전곡항",
-      list: [
-        {
-          name:"제비호", url:"http://jebi.sunsang24.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://jebi.sunsang24.com/ship/schedule_fleet/202611"}}
-        },
-        {
-          name:"스타피싱호", url:"http://rainbowho.com",
-          days:{fri:null, sat:null,
-            sun:{status:"가능", seats:1, url:"http://rainbowho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=1925&PH_N_UID=0&PS_N_UID=11313"}}
-        },
-        {
-          name:"왕선장호", url:"http://king.sunsang24.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://king.sunsang24.com/ship/schedule_fleet/202611"}}
-        }
-      ]
+        "port": "전곡항",
+        "list": [
+            {
+                "name": "제비호",
+                "url": "http://jebi.sunsang24.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://jebi.sunsang24.com/ship/schedule_fleet/202611"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://jebi.sunsang24.com/ship/schedule_fleet/202611"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://jebi.sunsang24.com/ship/schedule_fleet/202611"
+                    }
+                }
+            },
+            {
+                "name": "스타피싱호",
+                "url": "http://rainbowho.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://rainbowho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261106&PA_N_UID=1925&PH_N_UID=0&PS_N_UID=11313"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://rainbowho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261107&PA_N_UID=1925&PH_N_UID=0&PS_N_UID=11313"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://rainbowho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261108&PA_N_UID=1925&PH_N_UID=0&PS_N_UID=11313"
+                    }
+                }
+            },
+            {
+                "name": "왕선장호",
+                "url": "http://king.sunsang24.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://king.sunsang24.com/ship/schedule_fleet/202611"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://king.sunsang24.com/ship/schedule_fleet/202611"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://king.sunsang24.com/ship/schedule_fleet/202611"
+                    }
+                }
+            }
+        ]
     },
     {
-      port: "영흥도",
-      list: [
-        {
-          name:"금강7호", url:"http://kumkangho.co.kr",
-          days:{fri:null, sat:null,
-            sun:{status:"미분류", seats:null, url:"https://thefishing.kr/reservation/list.php?uid=1839&year=2026&month=11"}}
-        },
-        {
-          name:"카리스마호", url:"http://charisma.sunsang24.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://charisma.sunsang24.com/ship/schedule_fleet/202611"}}
-        },
-        {
-          name:"나이스호", url:"http://niceho.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://niceho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=176&PH_N_UID=0&PS_N_UID=24003"}}
-        },
-        {
-          name:"명성호", url:"http://xn--hq1b31ko5fzpfdsxrtb.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://xn--hq1b31ko5fzpfdsxrtb.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261101&PA_N_UID=1685&PH_N_UID=0&PS_N_UID=13742"}}
-        },
-        {
-          name:"레전드호", url:"http://xn--hy1b43d01tuzn.com",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://xn--hy1b43d01tuzn.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=1289&PH_N_UID=0&PS_N_UID=17486"}}
-        },
-        {
-          name:"영진호", url:"http://youngjinho.net",
-          days:{fri:null, sat:null,
-            sun:{status:"미분류", seats:null, url:"https://thefishing.kr/reservation/list.php?uid=801&year=2026&month=11"}}
-        },
-        {
-          name:"루어피싱호", url:"http://yhdfish.net",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://yhdfish.net/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=2441&PH_N_UID=0&PS_N_UID=9763"}}
-        },
-        {
-          name:"팀누리호", url:"http://xn--od1b68lz1wi4c.kr",
-          days:{fri:null, sat:null,
-            sun:{status:"마감", seats:0, url:"http://xn--od1b68lz1wi4c.kr/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261101&PA_N_UID=6149&PH_N_UID=0&PS_N_UID=SPED_UID542330"}}
-        },
-        {
-          name:"팀만수호", url:"https://teammansu.kr",
-          days:{fri:null, sat:null, sun:null}
-        }
-      ]
+        "port": "영흥도",
+        "list": [
+            {
+                "name": "금강7호",
+                "url": "http://kumkangho.co.kr",
+                "days": {
+                    "fri": {
+                        "status": "가능",
+                        "seats": 1,
+                        "url": "http://kumkangho.co.kr/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261106&PA_N_UID=1839&PH_N_UID=0&PS_N_UID=10006"
+                    },
+                    "sat": {
+                        "status": "미분류",
+                        "seats": null,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=1839&year=2026&month=11"
+                    },
+                    "sun": {
+                        "status": "미분류",
+                        "seats": null,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=1839&year=2026&month=11"
+                    }
+                }
+            },
+            {
+                "name": "카리스마호",
+                "url": "http://charisma.sunsang24.com",
+                "days": {
+                    "fri": {
+                        "status": "가능",
+                        "seats": 1,
+                        "url": "http://charisma.sunsang24.com/mypage/reservation_ready/1613509"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://charisma.sunsang24.com/ship/schedule_fleet/202611"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://charisma.sunsang24.com/ship/schedule_fleet/202611"
+                    }
+                }
+            },
+            {
+                "name": "나이스호",
+                "url": "http://niceho.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://niceho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261106&PA_N_UID=176&PH_N_UID=0&PS_N_UID=24003"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://niceho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261107&PA_N_UID=176&PH_N_UID=0&PS_N_UID=24003"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://niceho.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261108&PA_N_UID=176&PH_N_UID=0&PS_N_UID=24003"
+                    }
+                }
+            },
+            {
+                "name": "명성호",
+                "url": "http://xn--hq1b31ko5fzpfdsxrtb.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--hq1b31ko5fzpfdsxrtb.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261106&PA_N_UID=1685&PH_N_UID=0&PS_N_UID=13742"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--hq1b31ko5fzpfdsxrtb.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261107&PA_N_UID=1685&PH_N_UID=0&PS_N_UID=13742"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--hq1b31ko5fzpfdsxrtb.com/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261108&PA_N_UID=1685&PH_N_UID=0&PS_N_UID=13742"
+                    }
+                }
+            },
+            {
+                "name": "레전드호",
+                "url": "http://xn--hy1b43d01tuzn.com",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--hy1b43d01tuzn.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261106&PA_N_UID=1289&PH_N_UID=0&PS_N_UID=17486"
+                    },
+                    "sat": {
+                        "status": "미분류",
+                        "seats": null,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=1289&year=2026&month=11"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--hy1b43d01tuzn.com/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261108&PA_N_UID=1289&PH_N_UID=0&PS_N_UID=17486"
+                    }
+                }
+            },
+            {
+                "name": "영진호",
+                "url": "http://youngjinho.net",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=801&year=2026&month=11"
+                    },
+                    "sat": {
+                        "status": "미분류",
+                        "seats": null,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=801&year=2026&month=11"
+                    },
+                    "sun": {
+                        "status": "미분류",
+                        "seats": null,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=801&year=2026&month=11"
+                    }
+                }
+            },
+            {
+                "name": "루어피싱호",
+                "url": "http://yhdfish.net",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://yhdfish.net/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261106&PA_N_UID=2441&PH_N_UID=0&PS_N_UID=9763"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://yhdfish.net/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261107&PA_N_UID=2441&PH_N_UID=0&PS_N_UID=9763"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://yhdfish.net/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261108&PA_N_UID=2441&PH_N_UID=0&PS_N_UID=9763"
+                    }
+                }
+            },
+            {
+                "name": "팀누리호",
+                "url": "http://xn--od1b68lz1wi4c.kr",
+                "days": {
+                    "fri": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--od1b68lz1wi4c.kr/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261106&PA_N_UID=6149&PH_N_UID=0&PS_N_UID=SPED_UID542335"
+                    },
+                    "sat": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--od1b68lz1wi4c.kr/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261107&PA_N_UID=6149&PH_N_UID=0&PS_N_UID=SPED_UID542336"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "http://xn--od1b68lz1wi4c.kr/_core/module/reservation_boat_v5.2_seat1/popup.step1.php?date=20261108&PA_N_UID=6149&PH_N_UID=0&PS_N_UID=SPED_UID542337"
+                    }
+                }
+            },
+            {
+                "name": "팀만수호",
+                "url": "https://teammansu.kr",
+                "days": {
+                    "fri": {
+                        "status": "가능",
+                        "seats": 1,
+                        "url": "https://teammansu.kr/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261106&PA_N_UID=2829&PH_N_UID=0&PS_N_UID=17967"
+                    },
+                    "sat": {
+                        "status": "미분류",
+                        "seats": null,
+                        "url": "https://thefishing.kr/reservation/list.php?uid=2829&year=2026&month=11"
+                    },
+                    "sun": {
+                        "status": "마감",
+                        "seats": 0,
+                        "url": "https://teammansu.kr/_core/module/reservation_boat_v5.1/popup.step1.php?date=20261108&PA_N_UID=2829&PH_N_UID=0&PS_N_UID=17967"
+                    }
+                }
+            }
+        ]
     }
-  ];
+];
 
   function statusClass(s){
     if(s===null) return 'none';
