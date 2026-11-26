@@ -121,7 +121,9 @@
     background:var(--surface); border:1px solid var(--line); border-radius:10px;
     padding:11px 12px; box-shadow:var(--shadow);
   }
-  .weather-card .loc{font-size:14px; font-weight:500; margin-bottom:8px;}
+  .weather-card .loc{font-size:14px; font-weight:500; margin-bottom:8px; display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;}
+  .weather-card .loc .gale-normal{font-size:12px; font-weight:400; color:var(--text-dim);}
+  .weather-card .loc .gale-warn{font-size:12px; font-weight:700; color:#ef4444; background:rgba(239,68,68,.12); padding:1px 6px; border-radius:4px; border:1px solid rgba(239,68,68,.25);}
   .weather-btns{display:flex; gap:6px;}
   .weather-btn{
     flex:1; text-align:center; text-decoration:none; color:var(--text-dim);
@@ -179,7 +181,7 @@
   <div id="otherPorts"></div>
 </div>
 
-<footer class="foot">HOJAK FLEET DISPATCH · 최신 자동 갱신 2026-11-26 03:05 (N100 reservation-monitor)</footer>
+<footer class="foot">HOJAK FLEET DISPATCH · 최신 자동 갱신 2026-11-26 16:51 (N100 reservation-monitor)</footer>
 
 <script>
 (function(){
@@ -533,12 +535,34 @@
   }
 
   var weatherLinks = [
-    {name:"신창항", idx:1223},
-    {name:"자월도", idx:377},
-    {name:"천수만", idx:356}
-  ];
+    {
+        "name": "신창항",
+        "status": "정상",
+        "idx": 1223
+    },
+    {
+        "name": "천수만",
+        "status": "정상",
+        "idx": 356
+    },
+    {
+        "name": "신진도",
+        "status": "풍랑주의보",
+        "idx": 231
+    },
+    {
+        "name": "궁평항",
+        "status": "정상",
+        "idx": 466
+    }
+];
   document.getElementById('weatherGrid').innerHTML = weatherLinks.map(function(w){
-    return '<div class="weather-card"><div class="loc">'+w.name+'</div><div class="weather-btns">'+
+    var st = w.status || '정상';
+    var isWarning = st.indexOf('주의보') !== -1 || st.indexOf('경보') !== -1;
+    var statusClass = isWarning ? 'gale-warn' : 'gale-normal';
+    return '<div class="weather-card">'+
+      '<div class="loc">' + w.name + ' <span class="' + statusClass + '">(' + st + ')</span></div>'+
+      '<div class="weather-btns">'+
       '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/windy" target="_blank" rel="noopener">윈디</a>'+
       '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/tide" target="_blank" rel="noopener">물때표</a>'+
       '<a class="weather-btn" href="https://www.badatime.com/'+w.idx+'/sea-temp" target="_blank" rel="noopener">수온</a>'+

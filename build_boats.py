@@ -13,6 +13,60 @@ BASE_DIR = Path(__file__).resolve().parent
 INDEX_HTML = BASE_DIR / "index.html"
 STATE_DIR = Path("/home/ttolmany/scripts/reservation-monitor/state")
 
+# 날씨 바로가기 대상 항구 및 기상특보(풍랑주의보/경보) 구역 매핑
+PORT_WARNING_ZONES = {
+    "신창항": ["제주도서부앞바다", "제주도북부앞바다", "제주도앞바다"],
+    "천수만": ["충남남부앞바다", "보령앞바다"],
+    "신진도": ["충남북부앞바다", "태안앞바다"],
+    "궁평항": ["인천·경기남부앞바다", "경기남부앞바다", "인천.경기남부앞바다"],
+}
+
+DEFAULT_WEATHER_PORTS = [
+    {"name": "신창항", "idx": 1223},
+    {"name": "천수만", "idx": 356},
+    {"name": "신진도", "idx": 231},
+    {"name": "궁평항", "idx": 466},
+]
+
+
+def fetch_gale_warnings():
+    """badatime.com/warning 에서 실시간 기상특보(풍랑주의보/풍랑경보)를 스크래핑하여 지역별 상태 반환."""
+    import urllib.request
+    url = "https://www.badatime.com/warning"
+    gale_advisory = ""
+    gale_warning = ""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            html = r.read().decode("utf-8", errors="ignore")
+            m_gale = re.search(r"○\s*풍랑경보\s*:\s*([^<\n]+)", html)
+            if m_gale:
+                gale_warning = m_gale.group(1)
+            m_adv = re.search(r"○\s*풍랑주의보\s*:\s*([^<\n]+)", html)
+            if m_adv:
+                gale_advisory = m_adv.group(1)
+    except Exception as e:
+        print(f"[build_boats] 기상특보 조회 실패 (fallback '정상' 유지): {e}")
+
+    results = []
+    for p in DEFAULT_WEATHER_PORTS:
+        name = p["name"]
+        zones = PORT_WARNING_ZONES.get(name, [])
+        status = "정상"
+        for z in zones:
+            if z in gale_warning:
+                status = "풍랑경보"
+                break
+            elif z in gale_advisory:
+                status = "풍랑주의보"
+                break
+        results.append({
+            "name": name,
+            "status": status,
+            "idx": p["idx"]
+        })
+    return results
+
 # 탑티어 선사 기본 레지스트리 (항구별)
 BASE_BOATS = [
     {
@@ -146,6 +200,16 @@ def build(ref_date=None):
     content = re.sub(
         r"var boats\s*=\s*\[[\s\S]*?\];",
         f"var boats = {boats_json};",
+        content,
+        count=1
+    )
+
+    # var weatherLinks = [...]; 치환 (풍랑특보 반영)
+    weather_data = fetch_gale_warnings()
+    weather_json = json.dumps(weather_data, ensure_ascii=False, indent=4)
+    content = re.sub(
+        r"var weatherLinks\s*=\s*\[[\s\S]*?\];",
+        f"var weatherLinks = {weather_json};",
         content,
         count=1
     )
